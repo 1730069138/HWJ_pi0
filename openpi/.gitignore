@@ -23,6 +23,10 @@ logs/
 *.tgz
 *.7z
 
+# Small source/configuration archives that are intentionally versioned.
+!src/openpi/training/config实际训练前的存档.zip
+!src/openpi/training/config（仿真10hz+实际版）.zip
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
