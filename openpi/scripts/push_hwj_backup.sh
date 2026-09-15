@@ -14,13 +14,15 @@ fi
 
 source_commit="$(git rev-parse HEAD)"
 source_tree="$(git rev-parse 'HEAD^{tree}')"
-wrapped_tree="$(printf '040000 tree %s\topenpi\n' "$source_tree" | git mktree)"
 backup_ref="refs/heads/hwj-main"
 
 if previous_backup="$(git rev-parse --verify "$backup_ref" 2>/dev/null)"; then
+    readme_entry="$(git ls-tree "$previous_backup" README.md)"
+    wrapped_tree="$(printf '%s\n040000 tree %s\topenpi\n' "$readme_entry" "$source_tree" | sed '/^$/d' | git mktree)"
     backup_commit="$(printf 'Backup openpi at %s\n' "$source_commit" | git commit-tree "$wrapped_tree" -p "$previous_backup")"
     git update-ref "$backup_ref" "$backup_commit" "$previous_backup"
 else
+    wrapped_tree="$(printf '040000 tree %s\topenpi\n' "$source_tree" | git mktree)"
     backup_commit="$(printf 'Initial backup of openpi at %s\n' "$source_commit" | git commit-tree "$wrapped_tree")"
     git update-ref "$backup_ref" "$backup_commit"
 fi
